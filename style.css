@@ -253,6 +253,15 @@ button .fas {
   color: #003c71;
 }
 
+.greeting-message {
+  color: #0071c5;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 16px 0;
+  text-align: center;
+  min-height: 1.5em;
+}
+
 /* Counter */
 #attendeeCount {
   color: #0071c5;
