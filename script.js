@@ -58,6 +58,14 @@ form.addEventListener("submit", function (event) {
 
   // Show welcome message
   const message = `🎉 Welcome, ${name} from ${teamName}!`;
+  console.log(message);
+
+  // Display the message on the screen
+  const greeting = document.getElementById("greeting");
+  greeting.textContent = message;
+
+  // Show a pop up message
+  alert(message);
 
   form.reset();
 });
