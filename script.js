@@ -10,13 +10,16 @@ if (localStorage.getItem("attendeeCount")) {
   attendeeCount = parseInt(localStorage.getItem("attendeeCount"));
 }
 if (localStorage.getItem("waterCount")) {
-  document.getElementById("waterCount").textContent = localStorage.getItem("waterCount");
+  document.getElementById("waterCount").textContent =
+    localStorage.getItem("waterCount");
 }
 if (localStorage.getItem("zeroCount")) {
-  document.getElementById("zeroCount").textContent = localStorage.getItem("zeroCount");
+  document.getElementById("zeroCount").textContent =
+    localStorage.getItem("zeroCount");
 }
 if (localStorage.getItem("powerCount")) {
-  document.getElementById("powerCount").textContent = localStorage.getItem("powerCount");
+  document.getElementById("powerCount").textContent =
+    localStorage.getItem("powerCount");
 }
 
 // Function to update the attendee count in the span
@@ -53,6 +56,31 @@ if (localStorage.getItem("totalCheckIns")) {
 // Progress bar element
 const progressBar = document.getElementById("progressBar");
 
+// Load attendee list from localStorage if available
+let attendees = [];
+if (localStorage.getItem("attendees")) {
+  attendees = JSON.parse(localStorage.getItem("attendees"));
+}
+
+// Function to render attendee list
+function renderAttendeeList() {
+  const attendeeList = document.getElementById("attendeeList");
+  attendeeList.innerHTML = "";
+  for (let i = 0; i < attendees.length; i++) {
+    const attendee = attendees[i];
+    const li = document.createElement("li");
+    li.textContent = attendee.name;
+    const span = document.createElement("span");
+    span.className = "attendee-team";
+    span.textContent = attendee.teamName;
+    li.appendChild(span);
+    attendeeList.appendChild(li);
+  }
+}
+
+// Initial render on page load
+renderAttendeeList();
+
 // Handle form submission
 form.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -81,6 +109,11 @@ form.addEventListener("submit", function (event) {
   teamCounter.textContent = teamCount;
   // Save team count to localStorage
   localStorage.setItem(team + "Count", teamCount);
+
+  // Add attendee to the list and save to localStorage
+  attendees.push({ name: name, team: team, teamName: teamName });
+  localStorage.setItem("attendees", JSON.stringify(attendees));
+  renderAttendeeList();
 
   // Show welcome message
   const message = `🎉 Welcome, ${name} from ${teamName}!`;
@@ -125,4 +158,28 @@ form.addEventListener("submit", function (event) {
   }
 
   form.reset();
+});
+
+// Add reset functionality
+const resetBtn = document.getElementById("resetBtn");
+resetBtn.addEventListener("click", function () {
+  // Reset all counters and attendee list
+  attendeeCount = 0;
+  count = 0;
+  document.getElementById("waterCount").textContent = "0";
+  document.getElementById("zeroCount").textContent = "0";
+  document.getElementById("powerCount").textContent = "0";
+  attendees = [];
+  updateAttendeeCount();
+  renderAttendeeList();
+  progressBar.style.width = "0%";
+  document.getElementById("greeting").textContent = "";
+
+  // Remove from localStorage
+  localStorage.removeItem("attendeeCount");
+  localStorage.removeItem("totalCheckIns");
+  localStorage.removeItem("waterCount");
+  localStorage.removeItem("zeroCount");
+  localStorage.removeItem("powerCount");
+  localStorage.removeItem("attendees");
 });
