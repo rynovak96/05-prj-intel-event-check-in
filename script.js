@@ -5,6 +5,20 @@ const checkInForm = document.getElementById("checkInForm");
 // Track the number of attendees
 let attendeeCount = 0;
 
+// Load counts from localStorage if available
+if (localStorage.getItem("attendeeCount")) {
+  attendeeCount = parseInt(localStorage.getItem("attendeeCount"));
+}
+if (localStorage.getItem("waterCount")) {
+  document.getElementById("waterCount").textContent = localStorage.getItem("waterCount");
+}
+if (localStorage.getItem("zeroCount")) {
+  document.getElementById("zeroCount").textContent = localStorage.getItem("zeroCount");
+}
+if (localStorage.getItem("powerCount")) {
+  document.getElementById("powerCount").textContent = localStorage.getItem("powerCount");
+}
+
 // Function to update the attendee count in the span
 function updateAttendeeCount() {
   attendeeCountSpan.textContent = `${attendeeCount}`;
@@ -18,6 +32,8 @@ checkInForm.addEventListener("submit", function (event) {
   event.preventDefault();
   attendeeCount = attendeeCount + 1;
   updateAttendeeCount();
+  // Save total count to localStorage
+  localStorage.setItem("attendeeCount", attendeeCount);
   // ...existing code for handling check-in (if any)...
 });
 // Get all needed Dom elements
@@ -28,6 +44,11 @@ const teamSelect = document.getElementById("teamSelect");
 // Track attendance
 let count = 0;
 const maxCount = 50;
+
+// Load total check-ins from localStorage if available
+if (localStorage.getItem("totalCheckIns")) {
+  count = parseInt(localStorage.getItem("totalCheckIns"));
+}
 
 // Progress bar element
 const progressBar = document.getElementById("progressBar");
@@ -45,6 +66,8 @@ form.addEventListener("submit", function (event) {
 
   // Increment count
   count++;
+  // Save total check-ins to localStorage
+  localStorage.setItem("totalCheckIns", count);
   console.log("Total Check-Ins: " + count);
 
   // Update progress bar width
@@ -54,7 +77,10 @@ form.addEventListener("submit", function (event) {
 
   // Update team counter
   const teamCounter = document.getElementById(team + "Count");
-  teamCounter.textContent = parseInt(teamCounter.textContent) + 1;
+  let teamCount = parseInt(teamCounter.textContent) + 1;
+  teamCounter.textContent = teamCount;
+  // Save team count to localStorage
+  localStorage.setItem(team + "Count", teamCount);
 
   // Show welcome message
   const message = `🎉 Welcome, ${name} from ${teamName}!`;
@@ -66,6 +92,37 @@ form.addEventListener("submit", function (event) {
 
   // Show a pop up message
   alert(message);
+
+  // Check if attendee goal is reached
+  if (count >= maxCount) {
+    // Get team counts
+    const waterCount = parseInt(
+      document.getElementById("waterCount").textContent
+    );
+    const zeroCount = parseInt(
+      document.getElementById("zeroCount").textContent
+    );
+    const powerCount = parseInt(
+      document.getElementById("powerCount").textContent
+    );
+
+    // Find the winning team
+    let winningTeam = "Team Water Wise";
+    let winningCount = waterCount;
+    if (zeroCount > winningCount) {
+      winningTeam = "Team Net Zero";
+      winningCount = zeroCount;
+    }
+    if (powerCount > winningCount) {
+      winningTeam = "Team Renewables";
+      winningCount = powerCount;
+    }
+
+    // Show celebration message
+    const celebration = `🏆 Check-in goal reached! Congratulations to ${winningTeam} for having the most attendees!`;
+    greeting.textContent = celebration;
+    alert(celebration);
+  }
 
   form.reset();
 });
